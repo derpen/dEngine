@@ -5,9 +5,23 @@ Under HEAVY development (an hour a day work)
 A game engine, by derpen (me :3)
 
 Libraries used:
-* OpenGL
+* OpenGL 4.6
+* gcc 13.2.1-13
 
 ## Setting up environment: 
+
+Developed in Artix linux.
+
+`sudo pacman -Sy glfw-x11 mesa-utils glew glm`
+
+Nvidia drivers. If you use amd/intel, [here.](https://wiki.archlinux.org/title/OpenGL)
+
+`yay -S nvidia-390xx-dkms nvidia-390xx-utils`
+
+Copy `include` folder to your include folder.
+`sudo cp -R include/* /usr/include/*`
+
+## Resources:
 
 https://www.opengl-tutorial.org/beginners-tutorials/tutorial-1-opening-a-window/#introduction
 
