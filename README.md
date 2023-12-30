@@ -27,6 +27,8 @@ https://www.opengl-tutorial.org/beginners-tutorials/tutorial-1-opening-a-window/
 
 https://github.com/opengl-tutorials/ogl
 
+https://learnopengl.com
+
 https://medium.com/geekculture/a-beginners-guide-to-setup-opengl-in-linux-debian-2bfe02ccd1e
 
 Unironically, ChatGPT is much better at debugging for c++ and OpenGL than just simply googling/duck-duck-go-ing. Lmao
@@ -34,4 +36,4 @@ Unironically, ChatGPT is much better at debugging for c++ and OpenGL than just s
 ## Build
 
 Build with:
-`g++ main.cpp -lglfw -lGLEW -lGL`
+`g++ main.cpp -lglfw -lGL -lX11 -lpthread -lXrandr -lXi -ldl -lGLEW`
