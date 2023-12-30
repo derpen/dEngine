@@ -1,6 +1,6 @@
 # dEngine
 
-Under HEAVY development (an hour a day work)
+Under HEAVY development (an hour a day work, when I feel like working on it)
 
 A game engine, by derpen (me :3)
 
