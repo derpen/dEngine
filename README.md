@@ -36,4 +36,13 @@ Unironically, ChatGPT is much better at debugging for c++ and OpenGL than just s
 ## Build
 
 Build with:
-`g++ main.cpp -lglfw -lGL -lX11 -lpthread -lXrandr -lXi -ldl -lGLEW`
+`make`
+
+Run with:
+`make run`
+
+Clean with
+`make clean`
+
+Personally, I would do all 3 at once (for now)
+`make && make run && make clean`
