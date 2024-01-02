@@ -2,7 +2,7 @@ CXX = g++
 CXXFLAGS = -std=c++11 -Wall
 LIBS = -lglfw -lGL -lX11 -lpthread -lXrandr -lXi -ldl -lGLEW
 
-SOURCES = main.cpp ./common/shader.cpp ./common/texture.cpp ./common/controls.cpp
+SOURCES = main.cpp ./common/shader.cpp ./common/texture.cpp ./common/controls.cpp ./common/objloader.cpp
 OBJECTS = $(SOURCES:.cpp=.o)
 EXECUTABLE = dEngine
 
