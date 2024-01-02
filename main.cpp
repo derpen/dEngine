@@ -83,9 +83,7 @@ int main( void )
 	GLuint MatrixID = glGetUniformLocation(programID, "MVP");
 
 	// Load the texture
-	GLuint Texture = loadDDS("HITORIBOCCHI.dds");
-	//GLuint Texture = loadDDS("uvmap.DDS");
-	//GLuint Texture = loadDDS("uvtemplate.DDS");
+	GLuint Texture = loadDDS("BOCCHI.dds");
 
     // Get a handle for our "myTextureSampler" uniform
 	GLuint TextureID  = glGetUniformLocation(programID, "myTextureSampler");
