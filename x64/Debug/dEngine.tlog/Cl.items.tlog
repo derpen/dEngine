@@ -1,0 +1,7 @@
+C:\dEngine\common\controls.cpp;C:\dEngine\x64\Debug\controls.obj
+C:\dEngine\common\objloader.cpp;C:\dEngine\x64\Debug\objloader.obj
+C:\dEngine\common\shader.cpp;C:\dEngine\x64\Debug\shader.obj
+C:\dEngine\common\texture.cpp;C:\dEngine\x64\Debug\texture.obj
+C:\dEngine\common\vboindexer.cpp;C:\dEngine\x64\Debug\vboindexer.obj
+C:\dEngine\glad.c;C:\dEngine\x64\Debug\glad.obj
+C:\dEngine\main.cpp;C:\dEngine\x64\Debug\main.obj

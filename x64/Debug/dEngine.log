@@ -1,0 +1,27 @@
+﻿  controls.cpp
+  objloader.cpp
+  shader.cpp
+  texture.cpp
+  vboindexer.cpp
+  main.cpp
+C:\dEngine\main.cpp(193,46): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+  Generating Code...
+  glad.c
+glew32s.lib(glew.obj) : warning LNK4099: PDB '' was not found with 'glew32s.lib(glew.obj)' or at ''; linking object as if no debug info
+LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
+LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
+LINK : warning LNK4217: symbol '__glewAttachShader' defined in 'glew32s.lib(glew.obj)' is imported by 'shader.obj' in function '"unsigned int __cdecl LoadShaders(char const *,char const *)" (?LoadShaders@@YAIPEBD0@Z)'
+LINK : warning LNK4217: symbol '__glewCompileShader' defined in 'glew32s.lib(glew.obj)' is imported by 'shader.obj' in function '"unsigned int __cdecl LoadShaders(char const *,char const *)" (?LoadShaders@@YAIPEBD0@Z)'
+LINK : warning LNK4217: symbol '__glewCreateProgram' defined in 'glew32s.lib(glew.obj)' is imported by 'shader.obj' in function '"unsigned int __cdecl LoadShaders(char const *,char const *)" (?LoadShaders@@YAIPEBD0@Z)'
+LINK : warning LNK4217: symbol '__glewCreateShader' defined in 'glew32s.lib(glew.obj)' is imported by 'shader.obj' in function '"unsigned int __cdecl LoadShaders(char const *,char const *)" (?LoadShaders@@YAIPEBD0@Z)'
+LINK : warning LNK4217: symbol '__glewDeleteShader' defined in 'glew32s.lib(glew.obj)' is imported by 'shader.obj' in function '"unsigned int __cdecl LoadShaders(char const *,char const *)" (?LoadShaders@@YAIPEBD0@Z)'
+LINK : warning LNK4217: symbol '__glewDetachShader' defined in 'glew32s.lib(glew.obj)' is imported by 'shader.obj' in function '"unsigned int __cdecl LoadShaders(char const *,char const *)" (?LoadShaders@@YAIPEBD0@Z)'
+LINK : warning LNK4217: symbol '__glewGetProgramInfoLog' defined in 'glew32s.lib(glew.obj)' is imported by 'shader.obj' in function '"unsigned int __cdecl LoadShaders(char const *,char const *)" (?LoadShaders@@YAIPEBD0@Z)'
+LINK : warning LNK4217: symbol '__glewGetProgramiv' defined in 'glew32s.lib(glew.obj)' is imported by 'shader.obj' in function '"unsigned int __cdecl LoadShaders(char const *,char const *)" (?LoadShaders@@YAIPEBD0@Z)'
+LINK : warning LNK4217: symbol '__glewGetShaderInfoLog' defined in 'glew32s.lib(glew.obj)' is imported by 'shader.obj' in function '"unsigned int __cdecl LoadShaders(char const *,char const *)" (?LoadShaders@@YAIPEBD0@Z)'
+LINK : warning LNK4217: symbol '__glewGetShaderiv' defined in 'glew32s.lib(glew.obj)' is imported by 'shader.obj' in function '"unsigned int __cdecl LoadShaders(char const *,char const *)" (?LoadShaders@@YAIPEBD0@Z)'
+LINK : warning LNK4217: symbol '__glewLinkProgram' defined in 'glew32s.lib(glew.obj)' is imported by 'shader.obj' in function '"unsigned int __cdecl LoadShaders(char const *,char const *)" (?LoadShaders@@YAIPEBD0@Z)'
+LINK : warning LNK4217: symbol '__glewShaderSource' defined in 'glew32s.lib(glew.obj)' is imported by 'shader.obj' in function '"unsigned int __cdecl LoadShaders(char const *,char const *)" (?LoadShaders@@YAIPEBD0@Z)'
+LINK : warning LNK4217: symbol '__glewCompressedTexImage2D' defined in 'glew32s.lib(glew.obj)' is imported by 'texture.obj' in function '"unsigned int __cdecl loadDDS(char const *)" (?loadDDS@@YAIPEBD@Z)'
+LINK : warning LNK4217: symbol '__glewGenerateMipmap' defined in 'glew32s.lib(glew.obj)' is imported by 'texture.obj' in function '"unsigned int __cdecl loadBMP_custom(char const *)" (?loadBMP_custom@@YAIPEBD@Z)'
+  dEngine.vcxproj -> C:\dEngine\x64\Debug\dEngine.exe
