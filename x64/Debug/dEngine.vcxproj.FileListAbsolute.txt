@@ -1,2 +1,0 @@
-C:\dEngineTwo\dEngine\x64\Debug\dEngine.exe
-C:\dEngine\x64\Debug\dEngine.exe
