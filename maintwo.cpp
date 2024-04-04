@@ -4,6 +4,7 @@
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include "include/shader/shader_s.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);  
 void processInput(GLFWwindow *window);
@@ -45,77 +46,28 @@ int main() {
 	//	 0.0f,  0.5f, 0.0f
 	//};  
 
-	// Rectangle
+	//// Rectangle
+	//float vertices[] = {
+	//	 0.5f,  0.5f, 0.0f,  // top right
+	//	 0.5f, -0.5f, 0.0f,  // bottom right
+	//	-0.5f, -0.5f, 0.0f,  // bottom left
+	//	-0.5f,  0.5f, 0.0f   // top left 
+	//};
+	//unsigned int indices[] = {  // note that we start from 0!
+	//	0, 1, 3,   // first triangle
+	//	1, 2, 3    // second triangle
+	//};
+
+	// Compiling Shaders from our own class
+	Shader myShader("simpleVertexShader.vert", "simpleFragmentShader.frag");
+
+	// Tris but with more attribute
 	float vertices[] = {
-		 0.5f,  0.5f, 0.0f,  // top right
-		 0.5f, -0.5f, 0.0f,  // bottom right
-		-0.5f, -0.5f, 0.0f,  // bottom left
-		-0.5f,  0.5f, 0.0f   // top left 
-	};
-	unsigned int indices[] = {  // note that we start from 0!
-		0, 1, 3,   // first triangle
-		1, 2, 3    // second triangle
-	};
-
-	//---------------AVertex Shader----------
-	const char* vertexShaderSource = "#version 330 core\n"
-		"layout (location = 0) in vec3 aPos;\n"
-		"void main()\n"
-		"{\n"
-		"	gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-		"}\0";
-
-	unsigned int vertexShader;
-	vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-	glCompileShader(vertexShader);
-	// Check error in shader
-	int success;
-	char infoLog[512];
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-	if (!success) {
-		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-		std::cout << "SHADER VERTEX COMPILATION FAILED \n" << infoLog << std::endl;
-	}
-
-	//---------Fragment Shader----------
-
-	const char* fragmentShaderSource = "#version 330 core\n"
-		"out vec4 FragColor;\n"
-		"void main()\n"
-		"{\n"
-		"	FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-		"}\0";
-
-	unsigned int fragmentShader;
-	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-	glCompileShader(fragmentShader);
-
-	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success); // error checking, used the same variable because im lazy lmao
-	if (!success) {
-		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-		std::cout << "SHADER FRAGMENT COMPILATION FAILED \n" << infoLog << std::endl;
-	}
-
-	//--------Creating shader program----------
-	unsigned int shaderProgram;
-	shaderProgram = glCreateProgram();
-
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
-
-	// Error checking
-	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-	if (!success) {
-		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-		std::cout << "ERROR LINKING SHADER PROGRAM" << infoLog << std::endl;
-	}
-
-	// Deleting shaders cause not needed
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
+		// positions         // colors
+		 0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   // bottom right
+		-0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   // bottom left
+		 0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f    // top 
+	};    
 
 	//-----------CREATE VAO (vertex array objects), make sure to do this before doing VBO -------
 	unsigned int VAO;
@@ -132,11 +84,20 @@ int main() {
 	unsigned int EBO;
 	glGenBuffers(1, &EBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
 	//------------Linking Vertex Attribute or whatever---------
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	//glEnableVertexAttribArray(0);
+	// --------- We have two attributes now, so make for both ----------
+	// Position attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
+
+	// Color attribute
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
 
 	// Optional, unbind the VBO, and VAO
 	// glBindBuffer(GL_ARRAY_BUFFER, 0); 
@@ -153,11 +114,11 @@ int main() {
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-		glUseProgram(shaderProgram);
+		myShader.use();
 		glBindVertexArray(VAO);
-		//glDrawArrays(GL_TRIANGLES, 0, 3); // to create tris
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // to create rects
-		glBindVertexArray(0); //unbind or whatever
+		glDrawArrays(GL_TRIANGLES, 0, 3); // to create tris
+		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // to create rects
+		//glBindVertexArray(0); //unbind or whatever
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();    
