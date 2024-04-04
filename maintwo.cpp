@@ -142,6 +142,10 @@ int main() {
 	// glBindBuffer(GL_ARRAY_BUFFER, 0); 
 	// glBindVertexArray(0);
 
+
+	// Draw in wireframe mode
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
 	while(!glfwWindowShouldClose(window))
 	{
 		processInput(window);
