@@ -35,6 +35,10 @@ Clean with
 Personally, I would do all 3 at once (for now)
 `make && make run && make clean`
 
+## Lmao
+
+![Spinning rect](content/speen.gif)
+
 ## Resources:
 
 https://www.opengl-tutorial.org/beginners-tutorials/tutorial-1-opening-a-window/#introduction
