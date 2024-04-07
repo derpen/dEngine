@@ -39,6 +39,8 @@ Personally, I would do all 3 at once (for now)
 
 ![Spinning rect](content/speen.gif)
 
+![Spinning rect many](content/speen_many.gif)
+
 ## Resources:
 
 https://www.opengl-tutorial.org/beginners-tutorials/tutorial-1-opening-a-window/#introduction
