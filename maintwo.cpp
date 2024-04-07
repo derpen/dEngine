@@ -5,6 +5,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "include/shader/shader_s.h"
+#include "include/stb/stb_image.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);  
 void processInput(GLFWwindow *window);
@@ -15,7 +16,7 @@ const unsigned int SCR_HEIGHT = 600;
 
 int main() {
 
-	std::cout << "Welcome to hell :)";
+	std::cout << "Welcome to hell :) \n";
 
 	glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -39,35 +40,60 @@ int main() {
 
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);  
 
-	//// Triangle
-	//float vertices[] = {
-	//	-0.5f, -0.5f, 0.0f,
-	//	 0.5f, -0.5f, 0.0f,
-	//	 0.0f,  0.5f, 0.0f
-	//};  
-
-	//// Rectangle
-	//float vertices[] = {
-	//	 0.5f,  0.5f, 0.0f,  // top right
-	//	 0.5f, -0.5f, 0.0f,  // bottom right
-	//	-0.5f, -0.5f, 0.0f,  // bottom left
-	//	-0.5f,  0.5f, 0.0f   // top left 
-	//};
-	//unsigned int indices[] = {  // note that we start from 0!
-	//	0, 1, 3,   // first triangle
-	//	1, 2, 3    // second triangle
-	//};
-
 	// Compiling Shaders from our own class
 	Shader myShader("simpleVertexShader.vert", "simpleFragmentShader.frag");
 
+	// Create texture object/program/whatever this things called
+	unsigned int texture, texture2;
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+
+	// Set texture wrapping/filtering option (on the curently bound texture object)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	// Load image :) with stb
+	int width, height, nrChannels;
+	stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
+	unsigned char* data = stbi_load("bocchi.jpg", &width, &height, &nrChannels, 0);
+	if (data) {
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else {
+		std::cout << "Failed to load data!! \n" << std::endl;
+	}
+
+	stbi_image_free(data); // clear after done
+
+	glGenTextures(1, &texture2);
+	glBindTexture(GL_TEXTURE_2D, texture2);
+	data = stbi_load("sata_andagi.png", &width, &height, &nrChannels, 0);
+	if (data) {
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else {
+		std::cout << "Failed to load data!! \n" << std::endl;
+	}
+
+	stbi_image_free(data); // clear after done
+
 	// Tris but with more attribute
 	float vertices[] = {
-		// positions         // colors
-		 0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   // bottom right
-		-0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   // bottom left
-		 0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f    // top 
-	};    
+		// positions          // colors           // texture coords
+		 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
+		 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
+		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
+		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
+	};
+
+	unsigned int indices[] = {
+        0, 1, 3, // first triangle
+        1, 2, 3  // second triangle
+    };
 
 	//-----------CREATE VAO (vertex array objects), make sure to do this before doing VBO -------
 	unsigned int VAO;
@@ -84,28 +110,36 @@ int main() {
 	unsigned int EBO;
 	glGenBuffers(1, &EBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 	//------------Linking Vertex Attribute or whatever---------
 	//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	//glEnableVertexAttribArray(0);
-	// --------- We have two attributes now, so make for both ----------
+	// --------- We have THREE attributes now, so make for both ----------
 	// Position attribute
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
 	// Color attribute
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
+
+	// Texture attribute
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
+
 
 	// Optional, unbind the VBO, and VAO
 	// glBindBuffer(GL_ARRAY_BUFFER, 0); 
 	// glBindVertexArray(0);
 
-
 	// Draw in wireframe mode
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	// Stuff to get multi texture working idk
+	myShader.use();
+	glUniform1i(glGetUniformLocation(myShader.ID, "bocchiFace"), 0);
+	glUniform1i(glGetUniformLocation(myShader.ID, "osakaFace"), 1);
 
 	while(!glfwWindowShouldClose(window))
 	{
@@ -115,10 +149,15 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT);
 
 		myShader.use();
+
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, texture2);
+
 		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 3); // to create tris
-		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // to create rects
-		//glBindVertexArray(0); //unbind or whatever
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // to create rects
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();    
