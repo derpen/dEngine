@@ -18,6 +18,15 @@ void processInput(GLFWwindow *window);
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
+// Camera options
+glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+
+// The time
+float deltaTime = 0.0f; // Time between current frame and last frame
+float lastFrame = 0.0f; // Time of last frame
+
 int main() {
 
 	std::cout << "Welcome to hell :) \n";
@@ -187,8 +196,20 @@ int main() {
 	glUniform1i(glGetUniformLocation(myShader.ID, "bocchiFace"), 0);
 	glUniform1i(glGetUniformLocation(myShader.ID, "osakaFace"), 1);
 
+	// We do this outside now
+	glm::mat4 projection = glm::mat4(1.0f);
+	projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+	myShader.setMat4("projection", projection);
+
 	while(!glfwWindowShouldClose(window))
 	{
+		// Handle time
+		float currentFrame = static_cast<float>(glfwGetTime());
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+
+		std::cout << "Delta time is: " << deltaTime << " LastFrame is: " << lastFrame << "\n" << std::endl;
+
 		processInput(window);
 
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -201,13 +222,21 @@ int main() {
 
 		myShader.use();
 
-		// is this where I do rotation n shit (?)
-		glm::mat4 view = glm::mat4(1.0f);
-		glm::mat4 projection = glm::mat4(1.0f);
-		projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -5.0f)); // move the object forward (or move the camera back)
+		//// is this where I do rotation n shit (?)
+		//glm::mat4 view = glm::mat4(1.0f);
+		//glm::mat4 projection = glm::mat4(1.0f);
+		//projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+		//view = glm::translate(view, glm::vec3(0.0f, 0.0f, -5.0f)); // move the object forward (or move the camera back)
 
-		myShader.setMat4("projection", projection);
+		//myShader.setMat4("projection", projection);
+		//myShader.setMat4("view", view);
+
+		// camera/view transformation
+		glm::mat4 view = glm::lookAt(
+			cameraPos, 
+			cameraPos + cameraFront, 
+			cameraUp
+		);
 		myShader.setMat4("view", view);
 
 		// Create the rect
@@ -217,7 +246,8 @@ int main() {
 			model = glm::translate(model, cubePositions[i]);
 			//float angle = 50.0f * i;
 			float angle = 50.0f * (i + 1);
-			model = glm::rotate(model, (float) glfwGetTime() * glm::radians(angle), glm::vec3(0.5f, 1.0f, 1.0f));
+			//model = glm::rotate(model, (float) glfwGetTime() * glm::radians(angle), glm::vec3(0.5f, 1.0f, 1.0f)); // Speeeeen
+			model = glm::rotate(model, glm::radians(angle), glm::vec3(0.5f, 1.0f, 1.0f)); // Speeeeen
 			myShader.setMat4("model", model);
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 
@@ -241,4 +271,14 @@ void processInput(GLFWwindow *window)
 {
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+
+	const float cameraSpeed = 5.5f * deltaTime;
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		cameraPos += cameraSpeed * cameraFront;
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		cameraPos -= cameraSpeed * cameraFront;
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
 }
