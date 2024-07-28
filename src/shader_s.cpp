@@ -135,7 +135,7 @@ void Shader::checkCompileErrors(unsigned int shader, std::string type) {
 		glGetProgramiv(shader, GL_LINK_STATUS, &success);
 		if (!success) {
 			glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-			std::cout << "ERROR LINKING PROGRAM OF TPYE: " << type << "\n" << "\n -------------" << std::endl;
+			std::cout << "ERROR LINKING PROGRAM OF TYPE: " << type << "\n" << "\n -------------" << std::endl;
 		}
 	}
 }
