@@ -6,16 +6,49 @@ project(dEngine)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 
-# This assumes the SDL source is available in vendor/SDL
-add_subdirectory(vendor/SDL EXCLUDE_FROM_ALL)
-
 file(GLOB_RECURSE src_files RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 src/*
 )
 
+find_package(Vulkan REQUIRED)
+
 add_executable(dEngine WIN32 ${src_files})
 
-# add_executable(dEngine WIN32 src/hello.c)
+# External libraries
+add_subdirectory(vendor/vk-bootstrap)
+add_subdirectory(vendor/SDL EXCLUDE_FROM_ALL)
+add_subdirectory(vendor/fmt)
+add_subdirectory(vendor/fastgltf)
+add_subdirectory(vendor/glm)
+
+# vkbootstrap
+add_library(vkbootstrap STATIC)
+file(GLOB_RECURSE vkbootstrap_src RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+vendor/vk-bootstrap/*)
+target_sources(vkbootstrap PUBLIC 
+  ${vkbootstrap_src}
+  )
+target_include_directories(vkbootstrap PUBLIC vendor/vk-bootstrap)
+target_link_libraries(vkbootstrap PUBLIC Vulkan::Vulkan $<$<BOOL:UNIX>:${CMAKE_DL_LIBS}>)
+
+# stb
+add_library(stb_image INTERFACE)
+target_include_directories(stb_image INTERFACE vendor/stb_image)
+
+# Imgui
+file(GLOB_RECURSE imgui_src RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+vendor/imgui/*)
+add_library(imgui STATIC)
+target_include_directories(imgui PUBLIC vendor/imgui)
+target_sources(imgui PUBLIC
+${imgui_src}
+)
 
 # Link to the actual SDL3 library.
-target_link_libraries(dEngine PRIVATE SDL3::SDL3)
+target_link_libraries(dEngine PRIVATE 
+SDL3::SDL3
+vk-bootstrap::vk-bootstrap
+fmt::fmt
+fastgltf::fastgltf
+glm::glm
+)
