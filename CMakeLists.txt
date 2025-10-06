@@ -7,7 +7,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 
 file(GLOB_RECURSE src_files RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-src/*
+src/* include/*
 )
 
 find_package(Vulkan REQUIRED)
@@ -34,6 +34,7 @@ target_link_libraries(vkbootstrap PUBLIC Vulkan::Vulkan $<$<BOOL:UNIX>:${CMAKE_D
 # stb
 add_library(stb_image INTERFACE)
 target_include_directories(stb_image INTERFACE vendor/stb_image)
+target_link_libraries(dEngine INTERFACE stb_image)
 
 # Imgui
 file(GLOB_RECURSE imgui_src RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
@@ -43,8 +44,15 @@ target_include_directories(imgui PUBLIC vendor/imgui)
 target_sources(imgui PUBLIC
 ${imgui_src}
 )
+target_link_libraries(dEngine INTERFACE imgui)
 
-# Link to the actual SDL3 library.
+# Vulkan Memory Allocator
+add_library(vma INTERFACE)
+target_include_directories(vma INTERFACE vendor/VulkanMemoryAllocator)
+target_link_libraries(dEngine INTERFACE vma)
+
+include_directories(include)
+
 target_link_libraries(dEngine PRIVATE 
 SDL3::SDL3
 vk-bootstrap::vk-bootstrap
