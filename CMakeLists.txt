@@ -21,18 +21,8 @@ add_subdirectory(vendor/fmt)
 add_subdirectory(vendor/fastgltf)
 add_subdirectory(vendor/glm)
 
-# vkbootstrap
-#add_library(vkbootstrap STATIC)
-#file(GLOB_RECURSE vkbootstrap_src RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} vendor/vk-bootstrap/*)
-#target_sources(vkbootstrap PUBLIC 
-#  ${vkbootstrap_src}
-#  )
-#target_include_directories(vkbootstrap PUBLIC vendor/vk-bootstrap)
-#target_link_libraries(vkbootstrap PUBLIC Vulkan::Vulkan $<$<BOOL:UNIX>:${CMAKE_DL_LIBS}>)
-
 # stb
 include_directories(vendor/stb_image)
-
 
 ## FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME 
 # Imgui
@@ -46,10 +36,8 @@ include_directories(vendor/stb_image)
 #target_link_libraries(dEngine INTERFACE imgui)
 
 
-
-
 # Vulkan Memory Allocator
-include_directories(vendor/VulkanMemoryAllocator)
+include_directories(vendor/VulkanMemoryAllocator/include)
 
 include_directories(include)
 
@@ -57,6 +45,7 @@ target_link_libraries(dEngine PRIVATE
 SDL3::SDL3
 vk-bootstrap::vk-bootstrap
 fmt::fmt
+Vulkan::Vulkan
 fastgltf::fastgltf
 glm::glm
 )

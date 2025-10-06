@@ -20,6 +20,11 @@ public:
 	VkDevice _device; // Vulkan device for commands
 	VkSurfaceKHR _surface;// Vulkan window surface
 
+	VkSwapchainKHR _swapchain;
+	VkFormat _swapchainImageFormat;
+	std::vector<VkImage> _swapchainImages;
+	std::vector<VkImageView> _swapchainImageViews;
+
 	void Init();
 	void Render();
 	void CleanUp();
