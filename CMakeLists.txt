@@ -32,24 +32,25 @@ target_include_directories(vkbootstrap PUBLIC vendor/vk-bootstrap)
 target_link_libraries(vkbootstrap PUBLIC Vulkan::Vulkan $<$<BOOL:UNIX>:${CMAKE_DL_LIBS}>)
 
 # stb
-add_library(stb_image INTERFACE)
-target_include_directories(stb_image INTERFACE vendor/stb_image)
-target_link_libraries(dEngine INTERFACE stb_image)
+include_directories(vendor/stb_image)
 
+
+## FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME 
 # Imgui
-file(GLOB_RECURSE imgui_src RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-vendor/imgui/*)
-add_library(imgui STATIC)
-target_include_directories(imgui PUBLIC vendor/imgui)
-target_sources(imgui PUBLIC
-${imgui_src}
-)
-target_link_libraries(dEngine INTERFACE imgui)
+#file(GLOB_RECURSE imgui_src RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+#vendor/imgui/*)
+#add_library(imgui STATIC)
+#target_include_directories(imgui PUBLIC vendor/imgui)
+#target_sources(imgui PUBLIC
+#${imgui_src}
+#)
+#target_link_libraries(dEngine INTERFACE imgui)
+
+
+
 
 # Vulkan Memory Allocator
-add_library(vma INTERFACE)
-target_include_directories(vma INTERFACE vendor/VulkanMemoryAllocator)
-target_link_libraries(dEngine INTERFACE vma)
+include_directories(vendor/VulkanMemoryAllocator)
 
 include_directories(include)
 
