@@ -22,14 +22,13 @@ add_subdirectory(vendor/fastgltf)
 add_subdirectory(vendor/glm)
 
 # vkbootstrap
-add_library(vkbootstrap STATIC)
-file(GLOB_RECURSE vkbootstrap_src RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-vendor/vk-bootstrap/*)
-target_sources(vkbootstrap PUBLIC 
-  ${vkbootstrap_src}
-  )
-target_include_directories(vkbootstrap PUBLIC vendor/vk-bootstrap)
-target_link_libraries(vkbootstrap PUBLIC Vulkan::Vulkan $<$<BOOL:UNIX>:${CMAKE_DL_LIBS}>)
+#add_library(vkbootstrap STATIC)
+#file(GLOB_RECURSE vkbootstrap_src RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} vendor/vk-bootstrap/*)
+#target_sources(vkbootstrap PUBLIC 
+#  ${vkbootstrap_src}
+#  )
+#target_include_directories(vkbootstrap PUBLIC vendor/vk-bootstrap)
+#target_link_libraries(vkbootstrap PUBLIC Vulkan::Vulkan $<$<BOOL:UNIX>:${CMAKE_DL_LIBS}>)
 
 # stb
 include_directories(vendor/stb_image)
