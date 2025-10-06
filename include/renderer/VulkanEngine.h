@@ -22,8 +22,10 @@ public:
 
 	VkSwapchainKHR _swapchain;
 	VkFormat _swapchainImageFormat;
+
 	std::vector<VkImage> _swapchainImages;
 	std::vector<VkImageView> _swapchainImageViews;
+	VkExtent2D _swapchainExtent;
 
 	void Init();
 	void Render();
@@ -31,6 +33,8 @@ public:
 
 private:
 	void init_vulkan();
+	void create_swapchain(uint32_t width, uint32_t height);
+	void destroy_swapchain();
 	void init_swapchain();
 	void init_commands();
 	void init_sync_structures();
