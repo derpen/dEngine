@@ -4,8 +4,13 @@
 #include <VkBootstrap.h>
 
 struct FrameData {
+	// Commands
 	VkCommandPool _commandPool;
 	VkCommandBuffer _mainCommandBuffer;
+
+	// Rendering synchronization shenanigans
+	VkSemaphore _swapchainSemaphore, _renderSemaphore;
+	VkFence _renderFence;
 };
 
 constexpr unsigned int FRAME_OVERLAP = 2;
