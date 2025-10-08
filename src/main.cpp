@@ -7,7 +7,7 @@ static VulkanEngine vulkanEngine;
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {
-    vulkanEngine.Init();
+    vulkanEngine.init();
 
     return SDL_APP_CONTINUE;
 }
@@ -24,11 +24,11 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
 
 SDL_AppResult SDL_AppIterate(void *appstate)
 {
-    vulkanEngine.Render();
+    vulkanEngine.render();
     return SDL_APP_CONTINUE;
 }
 
 void SDL_AppQuit(void *appstate, SDL_AppResult result)
 {
-    vulkanEngine.CleanUp();
+    vulkanEngine.cleanup();
 }

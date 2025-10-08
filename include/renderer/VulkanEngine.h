@@ -3,6 +3,25 @@
 #include <renderer/VulkanTypes.h>
 #include <VkBootstrap.h>
 
+// Not performant for bigger projects (then why would you put it in the tutorial!!!)
+struct DeletionQueue
+{
+	std::deque<std::function<void()>> deletors;
+
+	void push_function(std::function<void()>&& function) {
+		deletors.push_back(function);
+	}
+
+	void flush() {
+		// reverse iterate the deletion queue to execute all the functions
+		for (auto it = deletors.rbegin(); it != deletors.rend(); it++) {
+			(*it)(); //call functors
+		}
+
+		deletors.clear();
+	}
+};
+
 struct FrameData {
 	// Commands
 	VkCommandPool _commandPool;
@@ -11,6 +30,8 @@ struct FrameData {
 	// Rendering synchronization shenanigans
 	VkSemaphore _swapchainSemaphore, _renderSemaphore;
 	VkFence _renderFence;
+
+	DeletionQueue _deletionQueue;
 };
 
 constexpr unsigned int FRAME_OVERLAP = 2;
@@ -52,9 +73,18 @@ public:
 	VkQueue _graphicsQueue;
 	uint32_t _graphicsQueueFamily;
 
-	void Init();
-	void Render();
-	void CleanUp();
+	DeletionQueue _mainDeletionQueue;
+
+	//draw resources
+	AllocatedImage _drawImage;
+	VkExtent2D _drawExtent;
+
+	VmaAllocator _allocator;
+
+	void init();
+	void render();
+	void render_background(VkCommandBuffer cmd);
+	void cleanup();
 
 private:
 	void init_vulkan();
