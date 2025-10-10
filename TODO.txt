@@ -1,0 +1,15 @@
+compile all shaders
+
+copy assets/* folder to executable directory every time whole program compile 
+
+and make it so that shader files shows up in visual studio
+
+bonus: have a check to only copy those that's been changed
+
+READ:
+https://github.com/vblanco20-1/vulkan-guide/blob/all-chapters-2/CMakeLists.txt
+
+https://gist.github.com/mrtrizer/8047a79294e59cd2a1f8aa06795e756a
+https://cmake.org/cmake/help/latest/module/FindVulkan.html
+
+https://stackoverflow.com/questions/77755738/how-do-i-make-glsl-shader-sources-show-up-in-visual-studio-solution-explorer-usi
