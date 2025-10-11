@@ -1,4 +1,4 @@
-compile all shaders
+- [X] compile all shaders
 
 copy assets/* folder to executable directory every time whole program compile 
 
