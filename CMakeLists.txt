@@ -11,9 +11,9 @@ file(GLOB_RECURSE src_files RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 src/* include/*
 )
 
-find_package(Vulkan REQUIRED)
+include_directories(include) # ? Is this needed? Looks like duplicate of above
 
-add_executable(dEngine WIN32 ${src_files})
+find_package(Vulkan REQUIRED)
 
 # External libraries
 add_subdirectory(vendor/vk-bootstrap)
@@ -40,8 +40,6 @@ include_directories(vendor/stb_image)
 # Vulkan Memory Allocator
 include_directories(vendor/VulkanMemoryAllocator/include)
 
-include_directories(include)
-
 ###############################
 ### Shaders shenanigans, still broken
 ###############################
@@ -57,8 +55,8 @@ foreach(GLSL ${GLSL_SOURCE_FILES})
   message(STATUS "BUILDING SHADER")
   get_filename_component(FILE_NAME ${GLSL} NAME)
   set(SPIRV "${PROJECT_SOURCE_DIR}/assets/shaders/${FILE_NAME}.spv")
-  message(STATUS ${GLSL})
-  message(STATUS COMMAND ${Vulkan_GLSLC_EXECUTABLE} ${GLSL} "-o" ${SPIRV})
+  message(STATUS "Compiling " ${GLSL})
+  #message(STATUS COMMAND ${Vulkan_GLSLC_EXECUTABLE} ${GLSL} "-o" ${SPIRV})
   add_custom_command(
     OUTPUT ${SPIRV}
     COMMAND ${Vulkan_GLSLC_EXECUTABLE} ${GLSL} "-o" ${SPIRV}
@@ -71,7 +69,23 @@ add_custom_target(
     DEPENDS ${SPIRV_BINARY_FILES}
     )
 
+## Add shader files to IDE
+source_group("Shaders" FILES ${GLSL_SOURCE_FILES})
+set_source_files_properties(${GLSL_SOURCE_FILES} PROPERTIES LANGUAGE GLSL)
+set(PROJECT_FILES ${src_files} ${GLSL_SOURCE_FILES})
+add_executable(dEngine WIN32 ${PROJECT_FILES})
+
 add_dependencies(${PROJECT_NAME} Shaders)
+
+## Copy assets files to 
+## Might need a rework soon, might be worth to copy the .exe file into the asset folder
+## or use symlink. The point is to not make copy of asset folder
+set (destination "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIGURATION>/assets")
+add_custom_command(
+     TARGET ${PROJECT_NAME} POST_BUILD
+     COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different "${CMAKE_CURRENT_SOURCE_DIR}/assets" "${destination}"
+     DEPENDS ${destination}
+)
 ###############################
 
 
