@@ -1,6 +1,7 @@
 #pragma once
 
 #include <renderer/VulkanTypes.h>
+#include <renderer/VulkanDescriptors.h>
 #include <VkBootstrap.h>
 
 // Not performant for bigger projects (then why would you put it in the tutorial!!!)
@@ -81,6 +82,20 @@ public:
 
 	VmaAllocator _allocator;
 
+	/////////////////////////////////////
+	/// Descriptors
+	/////////////////////////////////////
+	DescriptorAllocator globalDescriptorAllocator;
+	VkDescriptorSet _drawImageDescriptors;
+	VkDescriptorSetLayout _drawImageDescriptorLayout;
+
+
+	/////////////////////////////////////
+	/// Pipelines
+	/////////////////////////////////////
+	VkPipeline _gradientPipeline;
+	VkPipelineLayout _gradientPipelineLayout;
+
 	void init();
 	void render();
 	void render_background(VkCommandBuffer cmd);
@@ -93,4 +108,7 @@ private:
 	void init_swapchain();
 	void init_commands();
 	void init_sync_structures();
+	void init_descriptors();
+	void init_pipelines();
+	void init_background_pipelines();
 };
