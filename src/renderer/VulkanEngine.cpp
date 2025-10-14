@@ -1,6 +1,7 @@
 #include <renderer/VulkanEngine.h>
 
 #include <SDL3/SDL.h>
+#include <SDL3/SDL_filesystem.h>
 #include <SDL3/SDL_vulkan.h>
 #include <renderer/VulkanTypes.h>
 #include <renderer/VulkanImages.h>
@@ -421,9 +422,16 @@ void VulkanEngine::init_background_pipelines()
 	VK_CHECK(vkCreatePipelineLayout(_device, &computeLayout, nullptr, &_gradientPipelineLayout));
 
 	//layout code
+	//Getting absolute path with SDL
+	//God bless you, SDL developers. May you all live a long life.
+	std::string basePath(SDL_GetBasePath());
+	std::string gradientShader("assets/shaders/gradient.comp.spv");
+	gradientShader = basePath + gradientShader;
+
 	VkShaderModule computeDrawShader;
-	if (!VulkanUtils::load_shader_module("assets/shaders/gradient.comp.spv", _device, &computeDrawShader))
+	if (!VulkanUtils::load_shader_module(gradientShader.c_str(), _device, &computeDrawShader))
 	{
+		// Never gets called for some reason, it segment faults instead
 		fmt::print("Error when building the compute shader \n");
 	}
 
