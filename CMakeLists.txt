@@ -11,7 +11,7 @@ file(GLOB_RECURSE src_files RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 src/* include/*
 )
 
-include_directories(include) # ? Is this needed? Looks like duplicate of above
+include_directories(include)
 
 find_package(Vulkan REQUIRED)
 
@@ -25,23 +25,20 @@ add_subdirectory(vendor/glm)
 # stb
 include_directories(vendor/stb_image)
 
-## FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME 
 # Imgui
-#file(GLOB_RECURSE imgui_src RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-#vendor/imgui/*)
-#add_library(imgui STATIC)
-#target_include_directories(imgui PUBLIC vendor/imgui)
-#target_sources(imgui PUBLIC
-#${imgui_src}
-#)
-#target_link_libraries(dEngine INTERFACE imgui)
-
+file(GLOB_RECURSE imgui_src RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} vendor/imgui/*)
+add_library(imgui STATIC)
+include_directories(vendor/imgui)
+target_include_directories(imgui PUBLIC vendor/imgui)
+target_sources(imgui PUBLIC ${imgui_src})
+target_link_libraries(imgui PUBLIC Vulkan::Vulkan SDL3::SDL3)
+target_compile_features(imgui PUBLIC cxx_std_14)
 
 # Vulkan Memory Allocator
 include_directories(vendor/VulkanMemoryAllocator/include)
 
 ###############################
-### Shaders shenanigans, still broken
+### Shaders shenanigans
 ###############################
 #target_compile_definitions(${PROJECT_NAME} PRIVATE VK_USE_PLATFORM_WIN32_KHR) ## Not needed?
 
@@ -77,7 +74,7 @@ add_executable(dEngine WIN32 ${PROJECT_FILES})
 
 add_dependencies(${PROJECT_NAME} Shaders)
 
-## Copy assets files to 
+## Copy assets files to .exe directory
 ## Might need a rework soon, might be worth to copy the .exe file into the asset folder
 ## or use symlink. The point is to not make copy of asset folder
 set (destination "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIGURATION>/assets")
@@ -86,6 +83,8 @@ add_custom_command(
      COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different "${CMAKE_CURRENT_SOURCE_DIR}/assets" "${destination}"
      DEPENDS ${destination}
 )
+###############################
+### Shaders shenanigans end
 ###############################
 
 
@@ -96,4 +95,5 @@ fmt::fmt
 Vulkan::Vulkan
 fastgltf::fastgltf
 glm::glm
+imgui
 )
