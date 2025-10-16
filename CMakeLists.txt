@@ -21,18 +21,10 @@ add_subdirectory(vendor/SDL EXCLUDE_FROM_ALL)
 add_subdirectory(vendor/fmt)
 add_subdirectory(vendor/fastgltf)
 add_subdirectory(vendor/glm)
+add_subdirectory(vendor/imgui)
 
 # stb
 include_directories(vendor/stb_image)
-
-# Imgui
-file(GLOB_RECURSE imgui_src RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} vendor/imgui/*)
-add_library(imgui STATIC)
-include_directories(vendor/imgui)
-target_include_directories(imgui PUBLIC vendor/imgui)
-target_sources(imgui PUBLIC ${imgui_src})
-target_link_libraries(imgui PUBLIC Vulkan::Vulkan SDL3::SDL3)
-target_compile_features(imgui PUBLIC cxx_std_14)
 
 # Vulkan Memory Allocator
 include_directories(vendor/VulkanMemoryAllocator/include)
@@ -89,11 +81,11 @@ add_custom_command(
 
 
 target_link_libraries(dEngine PRIVATE 
+imgui::imgui
 SDL3::SDL3
 vk-bootstrap::vk-bootstrap
 fmt::fmt
 Vulkan::Vulkan
 fastgltf::fastgltf
 glm::glm
-imgui
 )

@@ -1,0 +1,41 @@
+# Good lord, CMake is a nightmare
+
+project(imgui)
+
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# List source files explicitly or use file(GLOB ...) with caution
+file(GLOB_RECURSE imgui_headers RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.h)
+file(GLOB_RECURSE imgui_src RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
+
+add_library(imgui ${imgui_headers} ${imgui_src})
+add_library(imgui::imgui ALIAS imgui)
+
+target_include_directories(imgui PUBLIC 
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}> 
+    $<INSTALL_INTERFACE:include>
+)
+
+target_link_libraries(imgui PUBLIC Vulkan::Vulkan SDL3::SDL3)
+
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+
+install(
+    FILES ${imgui_headers}
+    DESTINATION include/imgui
+)
+
+install(
+    TARGETS imgui
+    EXPORT imgui-targets
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
+
+install(
+    EXPORT imgui-targets
+    NAMESPACE imgui::
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/imgui
+)
