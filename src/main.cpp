@@ -19,11 +19,21 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
         return SDL_APP_SUCCESS;  /* end the program, reporting success to the OS. */
     }
 
+    ImGui_ImplSDL3_ProcessEvent(event);
+
     return SDL_APP_CONTINUE; 
 }
 
 SDL_AppResult SDL_AppIterate(void *appstate)
 {
+	// Start the Dear ImGui frame
+	ImGui_ImplVulkan_NewFrame();
+	ImGui_ImplSDL3_NewFrame();
+	ImGui::NewFrame();
+
+    ImGui::ShowDemoWindow();
+    ImGui::Render();
+
     vulkanEngine.render();
     return SDL_APP_CONTINUE;
 }

@@ -3,9 +3,6 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_filesystem.h>
 #include <SDL3/SDL_vulkan.h>
-#include <imgui.h>
-#include <imgui_impl_sdl3.h>
-#include <imgui_impl_vulkan.h>
 #include <renderer/VulkanTypes.h>
 #include <renderer/VulkanImages.h>
 #include <renderer/VulkanInitializer.h>
@@ -48,6 +45,8 @@ void VulkanEngine::init() {
 	init_descriptors();
 
 	init_pipelines();
+
+	init_imgui();
 
     _isInitialized = true;
 }
@@ -93,8 +92,14 @@ void VulkanEngine::render() {
 	// execute a copy from the draw image into the swapchain
 	VulkanUtils::copy_image_to_image(cmd, _drawImage.image, _swapchainImages[swapchainImageIndex], _drawExtent, _swapchainExtent);
 
-	// set swapchain image layout to Present so we can show it on the screen
-	VulkanUtils::transition_image(cmd, _swapchainImages[swapchainImageIndex], VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
+	// set swapchain image layout to Attachment Optimal so we can draw it
+	VulkanUtils::transition_image(cmd, _swapchainImages[swapchainImageIndex], VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+
+	//draw imgui into the swapchain image
+	render_imgui(cmd,  _swapchainImageViews[swapchainImageIndex]);
+
+	// set swapchain image layout to Present so we can draw it
+	VulkanUtils::transition_image(cmd, _swapchainImages[swapchainImageIndex], VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
 
 	//finalize the command buffer (we can no longer add commands, but it can now be executed)
 	VK_CHECK(vkEndCommandBuffer(cmd));
@@ -156,6 +161,18 @@ void VulkanEngine::render_background(VkCommandBuffer cmd)
 	vkCmdDispatch(cmd, std::ceil(_drawExtent.width / 16.0), std::ceil(_drawExtent.height / 16.0), 1);
 }
 
+
+void VulkanEngine::render_imgui(VkCommandBuffer cmd, VkImageView targetImageView) {
+	VkRenderingAttachmentInfo colorAttachment = VulkanInit::attachment_info(targetImageView, nullptr, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+	VkRenderingInfo renderInfo = VulkanInit::rendering_info(_swapchainExtent, &colorAttachment, nullptr);
+
+	vkCmdBeginRendering(cmd, &renderInfo);
+
+	ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), cmd);
+
+	vkCmdEndRendering(cmd);
+}
+
 void VulkanEngine::cleanup() {
 	if (_isInitialized) {
 		vkDeviceWaitIdle(_device);
@@ -181,16 +198,17 @@ void VulkanEngine::cleanup() {
 
 		vkb::destroy_debug_utils_messenger(_instance, _debug_messenger);
 		vkDestroyInstance(_instance, nullptr);
-
-		ImGui_ImplVulkan_Shutdown();
-		ImGui_ImplSDL3_Shutdown();
-		ImGui::DestroyContext();
 	}
 
     loadedEngine = nullptr;
     fmt::println("We are cleaned, man");
 }
 
+
+/////////////////////////////////////
+/// @TODO:
+/// Used for later, won't exactly be used for ImGui yet
+/////////////////////////////////////
 void VulkanEngine::immediate_submit(std::function<void(VkCommandBuffer cmd)>&& function)
 {
 	VK_CHECK(vkResetFences(_device, 1, &_immFence));
@@ -555,7 +573,6 @@ void VulkanEngine::init_imgui()
 	init_info.PipelineRenderingCreateInfo.colorAttachmentCount = 1;
 	init_info.PipelineRenderingCreateInfo.pColorAttachmentFormats = &_swapchainImageFormat;
 	
-
 	init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
 
 	ImGui_ImplVulkan_Init(&init_info);

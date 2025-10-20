@@ -1,5 +1,8 @@
 #pragma once
 
+#include <imgui.h>
+#include <imgui_impl_sdl3.h>
+#include <imgui_impl_vulkan.h>
 #include <renderer/VulkanTypes.h>
 #include <renderer/VulkanDescriptors.h>
 #include <VkBootstrap.h>
@@ -97,9 +100,8 @@ public:
 	VkPipelineLayout _gradientPipelineLayout;
 
 	/////////////////////////////////////
-	/// Immediate submit structures (ImGUI related)
+	/// Immediate submit structures
 	/////////////////////////////////////
-	/// @TODO: Command might not be needed
     VkFence _immFence;
     VkCommandBuffer _immCommandBuffer;
     VkCommandPool _immCommandPool;
@@ -107,6 +109,7 @@ public:
 	void init();
 	void render();
 	void render_background(VkCommandBuffer cmd);
+	void render_imgui(VkCommandBuffer cmd, VkImageView targetImageView);
 	void cleanup();
 	void immediate_submit(std::function<void(VkCommandBuffer cmd)>&& function);
 
