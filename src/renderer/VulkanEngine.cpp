@@ -157,6 +157,12 @@ void VulkanEngine::render_background(VkCommandBuffer cmd)
 	// bind the descriptor set containing the draw image for the compute pipeline
 	vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_COMPUTE, _gradientPipelineLayout, 0, 1, &_drawImageDescriptors, 0, nullptr);
 
+	ComputePushConstants pc;
+	pc.data1 = glm::vec4(1, 0, 0, 1);
+	pc.data2 = glm::vec4(0, 0, 1, 1);
+
+	vkCmdPushConstants(cmd, _gradientPipelineLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(ComputePushConstants), &pc);
+
 	// execute the compute pipeline dispatch. We are using 16x16 workgroup size so we need to divide by it
 	vkCmdDispatch(cmd, std::ceil(_drawExtent.width / 16.0), std::ceil(_drawExtent.height / 16.0), 1);
 }
@@ -483,20 +489,30 @@ void VulkanEngine::init_background_pipelines()
 	computeLayout.pSetLayouts = &_drawImageDescriptorLayout;
 	computeLayout.setLayoutCount = 1;
 
+	VkPushConstantRange pushConstant{};
+	pushConstant.offset = 0;
+	pushConstant.size = sizeof(ComputePushConstants) ;
+	pushConstant.stageFlags = VK_SHADER_STAGE_COMPUTE_BIT;
+
+	computeLayout.pPushConstantRanges = &pushConstant;
+	computeLayout.pushConstantRangeCount = 1;
+
 	VK_CHECK(vkCreatePipelineLayout(_device, &computeLayout, nullptr, &_gradientPipelineLayout));
 
 	//layout code
 	//Getting absolute path with SDL
 	//God bless you, SDL developers. May you all live a long life.
 	std::string basePath(SDL_GetBasePath());
-	std::string gradientShader("assets/shaders/gradient.comp.spv");
+	//std::string gradientShader("assets/shaders/gradient.comp.spv");
+	std::string gradientShader("assets/shaders/gradient_color.comp.spv");
 	gradientShader = basePath + gradientShader;
 
 	VkShaderModule computeDrawShader;
 	if (!VulkanUtils::load_shader_module(gradientShader.c_str(), _device, &computeDrawShader))
 	{
-		// Never gets called for some reason, it segment faults instead
-		fmt::print("Error when building the compute shader \n");
+		// @TODO, Important?: Never gets called for some reason, it segment faults instead
+		//fmt::print("Error when building the compute shader \n");
+		fmt::print("Error when building the colored mesh shader \n");
 	}
 
 	VkPipelineShaderStageCreateInfo stageinfo{};
