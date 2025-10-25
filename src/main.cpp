@@ -14,8 +14,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 
 SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
 {
-    if (event->type == SDL_EVENT_KEY_DOWN ||
-        event->type == SDL_EVENT_QUIT) {
+    if (event->type == SDL_EVENT_QUIT) {
         return SDL_APP_SUCCESS;  /* end the program, reporting success to the OS. */
     }
 
@@ -31,7 +30,20 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 	ImGui_ImplSDL3_NewFrame();
 	ImGui::NewFrame();
 
-    ImGui::ShowDemoWindow();
+    if (ImGui::Begin("background")) {
+		ComputeEffect& selected = vulkanEngine.backgroundEffects[vulkanEngine.currentBackgroundEffect];
+		
+		ImGui::Text("Selected effect: ", selected.name);
+	
+		ImGui::SliderInt("Effect Index", &vulkanEngine.currentBackgroundEffect,0, vulkanEngine.backgroundEffects.size() - 1);
+	
+		ImGui::InputFloat4("data1",(float*)& selected.data.data1);
+		ImGui::InputFloat4("data2",(float*)& selected.data.data2);
+		ImGui::InputFloat4("data3",(float*)& selected.data.data3);
+		ImGui::InputFloat4("data4",(float*)& selected.data.data4);
+	}
+	ImGui::End();
+
     ImGui::Render();
 
     vulkanEngine.render();
