@@ -128,10 +128,17 @@ public:
 	std::vector<ComputeEffect> backgroundEffects;
 	int currentBackgroundEffect{ 0 };
 
+	VkPipelineLayout _trianglePipelineLayout;
+	VkPipeline _trianglePipeline;
+
 	void init();
+
+	/// @TODO: Might be more accurate to call these "draw" instead of "render"?
 	void render();
 	void render_background(VkCommandBuffer cmd);
 	void render_imgui(VkCommandBuffer cmd, VkImageView targetImageView);
+
+	void draw_geometry(VkCommandBuffer cmd);
 	void cleanup();
 	void immediate_submit(std::function<void(VkCommandBuffer cmd)>&& function);
 
@@ -146,4 +153,5 @@ private:
 	void init_pipelines();
 	void init_background_pipelines();
 	void init_imgui();
+	void init_triangle_pipeline();
 };
