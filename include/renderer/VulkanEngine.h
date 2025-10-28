@@ -131,6 +131,11 @@ public:
 	VkPipelineLayout _trianglePipelineLayout;
 	VkPipeline _trianglePipeline;
 
+	VkPipelineLayout _meshPipelineLayout;
+	VkPipeline _meshPipeline;
+
+	GPUMeshBuffers rectangle;
+
 	void init();
 
 	/// @TODO: Might be more accurate to call these "draw" instead of "render"?
@@ -139,6 +144,9 @@ public:
 	void render_imgui(VkCommandBuffer cmd, VkImageView targetImageView);
 
 	void draw_geometry(VkCommandBuffer cmd);
+	AllocatedBuffer create_buffer(size_t allocSize, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage);
+	void destroy_buffer(const AllocatedBuffer& buffer);
+	GPUMeshBuffers uploadMesh(std::span<uint32_t> indices, std::span<Vertex> vertices);
 	void cleanup();
 	void immediate_submit(std::function<void(VkCommandBuffer cmd)>&& function);
 
@@ -154,4 +162,6 @@ private:
 	void init_background_pipelines();
 	void init_imgui();
 	void init_triangle_pipeline();
+	void init_mesh_pipeline();
+	void init_default_data();
 };
