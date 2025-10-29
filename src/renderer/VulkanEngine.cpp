@@ -315,7 +315,6 @@ void VulkanEngine::cleanup() {
 
 		vkDestroySurfaceKHR(_instance, _surface, nullptr);
 		vkDestroyDevice(_device, nullptr);
-
 		vkb::destroy_debug_utils_messenger(_instance, _debug_messenger);
 		vkDestroyInstance(_instance, nullptr);
 	}
@@ -510,16 +509,16 @@ void VulkanEngine::init_commands() {
 		VK_CHECK(vkAllocateCommandBuffers(_device, &cmdAllocInfo, &_frames[i]._mainCommandBuffer));
 	}
 
-	//VK_CHECK(vkCreateCommandPool(_device, &commandPoolInfo, nullptr, &_immCommandPool));
+	VK_CHECK(vkCreateCommandPool(_device, &commandPoolInfo, nullptr, &_immCommandPool));
 
-	//// allocate the command buffer for immediate submits
-	//VkCommandBufferAllocateInfo cmdAllocInfo = VulkanInit::command_buffer_allocate_info(_immCommandPool, 1);
+	// allocate the command buffer for immediate submits
+	VkCommandBufferAllocateInfo cmdAllocInfo = VulkanInit::command_buffer_allocate_info(_immCommandPool, 1);
 
-	//VK_CHECK(vkAllocateCommandBuffers(_device, &cmdAllocInfo, &_immCommandBuffer));
+	VK_CHECK(vkAllocateCommandBuffers(_device, &cmdAllocInfo, &_immCommandBuffer));
 
-	//_mainDeletionQueue.push_function([=]() { 
-	//vkDestroyCommandPool(_device, _immCommandPool, nullptr);
-	//});
+	_mainDeletionQueue.push_function([=]() { 
+		vkDestroyCommandPool(_device, _immCommandPool, nullptr);
+	});
 }
 
 void VulkanEngine::init_sync_structures() {
@@ -537,8 +536,8 @@ void VulkanEngine::init_sync_structures() {
 		VK_CHECK(vkCreateSemaphore(_device, &semaphoreCreateInfo, nullptr, &_frames[i]._renderSemaphore));
 	}
 
-	//VK_CHECK(vkCreateFence(_device, &fenceCreateInfo, nullptr, &_immFence));
-	//_mainDeletionQueue.push_function([=]() { vkDestroyFence(_device, _immFence, nullptr); });
+	VK_CHECK(vkCreateFence(_device, &fenceCreateInfo, nullptr, &_immFence));
+	_mainDeletionQueue.push_function([=]() { vkDestroyFence(_device, _immFence, nullptr); });
 }
 
 

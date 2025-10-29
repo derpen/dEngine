@@ -1,6 +1,5 @@
 //GLSL version to use
 #version 460
-#extension GL_KHR_vulkan_glsl : enable
 #extension GL_EXT_buffer_reference : require
 
 layout (location = 0) out vec3 outColor;
