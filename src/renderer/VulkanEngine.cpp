@@ -212,6 +212,13 @@ void VulkanEngine::draw_geometry(VkCommandBuffer cmd)
 
 	vkCmdDrawIndexed(cmd, 6, 1, 0, 0, 0);
 
+	push_constants.vertexBuffer = testMeshes[2]->meshBuffers.vertexBufferAddress;
+
+	vkCmdPushConstants(cmd, _meshPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(GPUDrawPushConstants), &push_constants);
+	vkCmdBindIndexBuffer(cmd, testMeshes[2]->meshBuffers.indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
+
+	vkCmdDrawIndexed(cmd, testMeshes[2]->surfaces[0].count, 1, testMeshes[2]->surfaces[0].startIndex, 0, 0);
+
 	vkCmdEndRendering(cmd);
 }
 
@@ -760,7 +767,7 @@ void VulkanEngine::init_triangle_pipeline()
 		fmt::print("Error when building the triangle fragment shader module");
 	}
 	else {
-		fmt::print("Triangle fragment shader succesfully loaded");
+		fmt::print("Triangle fragment shader succesfully loaded\n");
 	}
 
 	std::string triangleVertex("assets/shaders/colored_triangle.vert.spv");
@@ -771,7 +778,7 @@ void VulkanEngine::init_triangle_pipeline()
 		fmt::print("Error when building the triangle vertex shader module");
 	}
 	else {
-		fmt::print("Triangle vertex shader succesfully loaded");
+		fmt::print("Triangle vertex shader succesfully loaded\n");
 	}
 	
 	//build the pipeline layout that controls the inputs/outputs of the shader
@@ -826,7 +833,7 @@ void VulkanEngine::init_mesh_pipeline() {
 		fmt::print("Error when building the triangle fragment shader module");
 	}
 	else {
-		fmt::print("Triangle fragment shader succesfully loaded");
+		fmt::print("Triangle fragment shader succesfully loaded\n");
 	}
 
 	std::string triangleVertex("assets/shaders/colored_triangle_mesh.vert.spv");
@@ -837,7 +844,7 @@ void VulkanEngine::init_mesh_pipeline() {
 		fmt::print("Error when building the triangle vertex shader module");
 	}
 	else {
-		fmt::print("Triangle vertex shader succesfully loaded");
+		fmt::print("Triangle vertex shader succesfully loaded\n");
 	}
 
 	VkPushConstantRange bufferRange{};
@@ -917,5 +924,14 @@ void VulkanEngine::init_default_data() {
 		destroy_buffer(rectangle.indexBuffer);
 		destroy_buffer(rectangle.vertexBuffer);
 	});
+
+	std::string basePath(SDL_GetBasePath());
+	std::string testMeshPath("assets\\models\\basicmesh.glb");
+	testMeshPath = basePath + testMeshPath;
+
+	const std::filesystem::path path = testMeshPath;
+
+	//testMeshes = loadGltfMeshes(this, testMeshPath.c_str()).value();
+	testMeshes = loadGltfMeshes(this, path).value();
 }
 

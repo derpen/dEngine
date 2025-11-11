@@ -5,6 +5,7 @@
 #include <imgui_impl_vulkan.h>
 #include <renderer/VulkanTypes.h>
 #include <renderer/VulkanDescriptors.h>
+#include <renderer/VulkanLoaders.h>
 #include <VkBootstrap.h>
 
 // Not performant for bigger projects (then why would you put it in the tutorial!!!)
@@ -135,6 +136,7 @@ public:
 	VkPipeline _meshPipeline;
 
 	GPUMeshBuffers rectangle;
+	std::vector<std::shared_ptr<MeshAsset>> testMeshes;
 
 	void init();
 

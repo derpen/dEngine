@@ -6,8 +6,9 @@
 #include <renderer/VulkanEngine.h>
 #include <renderer/VulkanInitializer.h>
 #include <renderer/VulkanTypes.h>
-#include <glm/gtx/quaternion.hpp>
 
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/quaternion.hpp>
 #include <fastgltf/glm_element_traits.hpp>
 #include <fastgltf/core.hpp>
 #include <fastgltf/tools.hpp>
@@ -15,9 +16,14 @@
 std::optional<std::vector<std::shared_ptr<MeshAsset>>> loadGltfMeshes(VulkanEngine* engine, std::filesystem::path filePath)
 {
 //> openmesh
-    std::cout << "Loading GLTF: " << filePath << std::endl;
+    std::cout << "Loading GLTF: " << filePath << "\n";
 
     auto data = fastgltf::GltfDataBuffer::FromPath(filePath);
+	if (data.error() != fastgltf::Error::None) {
+		// The file couldn't be loaded, or the buffer could not be allocated.
+        fmt::print("Failed to load glTF: {} \n", fastgltf::to_underlying(data.error()));
+        return {};
+    }
 
     constexpr auto gltfOptions = fastgltf::Options::LoadGLBBuffers
         | fastgltf::Options::LoadExternalBuffers;
@@ -28,9 +34,11 @@ std::optional<std::vector<std::shared_ptr<MeshAsset>>> loadGltfMeshes(VulkanEngi
     //auto load = parser.loadGltfBinary(&data, filePath.parent_path(), gltfOptions);
     auto load = parser.loadGltfBinary(data.get(), filePath.parent_path(), gltfOptions);
     if (!load) {
-        fmt::print("Failed to load glTF: {} \n", fastgltf::to_underlying(load.error()));
+        fmt::print("Failed to load Binary: {} \n", fastgltf::to_underlying(load.error()));
         return {};
     }
+
+    gltf = std::move(load.get());
 
 //< openmesh
 //> loadmesh
