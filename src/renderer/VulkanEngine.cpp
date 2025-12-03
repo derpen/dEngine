@@ -191,8 +191,8 @@ void VulkanEngine::draw_geometry(VkCommandBuffer cmd)
 	viewport.y = 0;
 	viewport.width = _drawExtent.width;
 	viewport.height = _drawExtent.height;
-	viewport.minDepth = 0.f;
-	viewport.maxDepth = 1.f;
+	viewport.minDepth = 0.0f;
+	viewport.maxDepth = 1.0f;
 
 	vkCmdSetViewport(cmd, 0, 1, &viewport);
 
@@ -218,10 +218,10 @@ void VulkanEngine::draw_geometry(VkCommandBuffer cmd)
 
 	vkCmdDrawIndexed(cmd, 6, 1, 0, 0, 0);
 
-	glm::mat4 view = glm::translate(glm::vec3{ 0,0,-5 });
+	glm::mat4 view = glm::translate(glm::vec3{ 0,0,-2 });
 	// camera projection
-	//glm::mat4 projection = glm::perspective(glm::radians(70.f), (float)_drawExtent.width / (float)_drawExtent.height, 10000.f, 0.1f);
-	glm::mat4 projection = glm::perspective(glm::radians(70.f), (float)_drawExtent.width / (float)_drawExtent.height, 0.1f, 10000.0f);
+	glm::mat4 projection = glm::perspective(glm::radians(70.f), (float)_drawExtent.width / (float)_drawExtent.height, 10000.f, 0.1f);
+	//glm::mat4 projection = glm::perspective(glm::radians(70.f), (float)_drawExtent.width / (float)_drawExtent.height, 0.1f, 10000.0f);
 
 	// invert the Y direction on projection matrix so that we are more similar
 	// to opengl and gltf axis

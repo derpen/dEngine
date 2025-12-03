@@ -79,6 +79,8 @@ add_custom_command(
 ### Shaders shenanigans end
 ###############################
 
+target_compile_definitions(dEngine PUBLIC GLM_FORCE_DEPTH_ZERO_TO_ONE)
+
 
 target_link_libraries(dEngine PRIVATE 
 imgui::imgui
