@@ -221,7 +221,6 @@ void VulkanEngine::draw_geometry(VkCommandBuffer cmd)
 	glm::mat4 view = glm::translate(glm::vec3{ 0,0,-2 });
 	// camera projection
 	glm::mat4 projection = glm::perspective(glm::radians(70.f), (float)_drawExtent.width / (float)_drawExtent.height, 10000.f, 0.1f);
-	//glm::mat4 projection = glm::perspective(glm::radians(70.f), (float)_drawExtent.width / (float)_drawExtent.height, 0.1f, 10000.0f);
 
 	// invert the Y direction on projection matrix so that we are more similar
 	// to opengl and gltf axis
@@ -840,7 +839,8 @@ void VulkanEngine::init_triangle_pipeline()
 	pipelineBuilder.set_cull_mode(VK_CULL_MODE_NONE, VK_FRONT_FACE_CLOCKWISE);
 	//no multisampling
 	pipelineBuilder.set_multisampling_none();
-	//no blending
+
+	// Blending setting
 	pipelineBuilder.disable_blending();
 
 	//pipelineBuilder.disable_depthtest();
@@ -913,8 +913,11 @@ void VulkanEngine::init_mesh_pipeline() {
 	pipelineBuilder.set_cull_mode(VK_CULL_MODE_NONE, VK_FRONT_FACE_CLOCKWISE);
 	//no multisampling
 	pipelineBuilder.set_multisampling_none();
-	//no blending
-	pipelineBuilder.disable_blending();
+
+	//Blending setting
+	//pipelineBuilder.disable_blending();
+	pipelineBuilder.enable_blending_additive();
+	//pipelineBuilder.enable_blending_alphablend();
 
 	//pipelineBuilder.disable_depthtest();
 	pipelineBuilder.enable_depthtest(true, VK_COMPARE_OP_GREATER_OR_EQUAL);
