@@ -9,6 +9,8 @@
 #include <VkBootstrap.h>
 
 // Not performant for bigger projects (then why would you put it in the tutorial!!!)
+// Also, don't believe the comments and notes on these.
+// I'll remake this later properly, this one is just for practice.
 struct DeletionQueue
 {
 	std::deque<std::function<void()>> deletors;
@@ -59,6 +61,7 @@ struct ComputeEffect {
 
 class VulkanEngine {
 public:
+	bool resize_requested{ false };
 	bool _isInitialized{ false };
 	int _frameNumber{ 0 };
 	VkExtent2D _windowExtent{ 1700 , 900 };
@@ -100,6 +103,7 @@ public:
 	AllocatedImage _drawImage;
 	AllocatedImage _depthImage;
 	VkExtent2D _drawExtent;
+	float renderScale = 1.f;
 
 	VmaAllocator _allocator;
 
@@ -152,6 +156,7 @@ public:
 	GPUMeshBuffers uploadMesh(std::span<uint32_t> indices, std::span<Vertex> vertices);
 	void cleanup();
 	void immediate_submit(std::function<void(VkCommandBuffer cmd)>&& function);
+	void resize_swapchain();
 
 private:
 	void init_vulkan();

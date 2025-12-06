@@ -36,7 +36,9 @@ void VulkanEngine::init() {
         "dEngine", 
         _windowExtent.width, 
         _windowExtent.height, 
-        SDL_WINDOW_VULKAN);
+        SDL_WINDOW_VULKAN |
+		SDL_WINDOW_RESIZABLE
+	);
 
     init_vulkan();
 
@@ -64,11 +66,22 @@ void VulkanEngine::render() {
 
 	get_current_frame()._deletionQueue.flush();
 
-	VK_CHECK(vkResetFences(_device, 1, &get_current_frame()._renderFence));
-
 	//request image from the swapchain
 	uint32_t swapchainImageIndex;
-	VK_CHECK(vkAcquireNextImageKHR(_device, _swapchain, 1000000000, get_current_frame()._swapchainSemaphore, nullptr, &swapchainImageIndex));
+
+	//VK_CHECK(vkAcquireNextImageKHR(_device, _swapchain, 1000000000, get_current_frame()._swapchainSemaphore, nullptr, &swapchainImageIndex));
+	VkResult e = vkAcquireNextImageKHR(_device, _swapchain, 1000000000, get_current_frame()._swapchainSemaphore, nullptr, &swapchainImageIndex);
+	if (e == VK_ERROR_OUT_OF_DATE_KHR) {
+        resize_requested = true;       
+		return;
+	}
+
+	//_drawExtent.width = _drawImage.imageExtent.width;
+	//_drawExtent.height = _drawImage.imageExtent.height;
+	_drawExtent.height = std::min(_swapchainExtent.height, _drawImage.imageExtent.height) * renderScale;
+	_drawExtent.width = std::min(_swapchainExtent.width, _drawImage.imageExtent.width) * renderScale;
+
+	VK_CHECK(vkResetFences(_device, 1, &get_current_frame()._renderFence));
 
 	//naming it cmd for shorter writing
 	VkCommandBuffer cmd = get_current_frame()._mainCommandBuffer;
@@ -79,9 +92,6 @@ void VulkanEngine::render() {
 
 	//begin the command buffer recording. We will use this command buffer exactly once, so we want to let vulkan know that
 	VkCommandBufferBeginInfo cmdBeginInfo = VulkanInit::command_buffer_begin_info(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
-
-	_drawExtent.width = _drawImage.imageExtent.width;
-	_drawExtent.height = _drawImage.imageExtent.height;
 
 	//start the command buffer recording
 	VK_CHECK(vkBeginCommandBuffer(cmd, &cmdBeginInfo));
@@ -141,7 +151,11 @@ void VulkanEngine::render() {
 
 	presentInfo.pImageIndices = &swapchainImageIndex;
 
-	VK_CHECK(vkQueuePresentKHR(_graphicsQueue, &presentInfo));
+	//VK_CHECK(vkQueuePresentKHR(_graphicsQueue, &presentInfo));
+	VkResult presentResult = vkQueuePresentKHR(_graphicsQueue, &presentInfo);
+	if (presentResult == VK_ERROR_OUT_OF_DATE_KHR) {
+		resize_requested = true;
+	}
 
 	//increase the number of frames drawn
 	_frameNumber++;
@@ -477,6 +491,22 @@ void VulkanEngine::destroy_swapchain()
 
 		vkDestroyImageView(_device, _swapchainImageViews[i], nullptr);
 	}
+}
+
+void VulkanEngine::resize_swapchain()
+{
+	vkDeviceWaitIdle(_device);
+
+	destroy_swapchain();
+
+	int w, h;
+	SDL_GetWindowSize(_window, &w, &h);
+	_windowExtent.width = w;
+	_windowExtent.height = h;
+
+	create_swapchain(_windowExtent.width, _windowExtent.height);
+
+	resize_requested = false;
 }
 
 void VulkanEngine::init_swapchain()

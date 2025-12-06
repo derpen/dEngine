@@ -25,12 +25,18 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
 
 SDL_AppResult SDL_AppIterate(void *appstate)
 {
+	if (vulkanEngine.resize_requested) {
+		vulkanEngine.resize_swapchain();
+	}
+
 	// Start the Dear ImGui frame
 	ImGui_ImplVulkan_NewFrame();
 	ImGui_ImplSDL3_NewFrame();
 	ImGui::NewFrame();
 
     if (ImGui::Begin("background")) {
+		ImGui::SliderFloat("Render Scale",&vulkanEngine.renderScale, 0.3f, 1.f);
+
 		ComputeEffect& selected = vulkanEngine.backgroundEffects[vulkanEngine.currentBackgroundEffect];
 		
 		ImGui::Text("Selected effect: ", selected.name);
