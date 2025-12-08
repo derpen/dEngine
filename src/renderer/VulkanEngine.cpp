@@ -193,7 +193,7 @@ void VulkanEngine::draw_geometry(VkCommandBuffer cmd)
 	VkRenderingAttachmentInfo colorAttachment = VulkanInit::attachment_info(_drawImage.imageView, nullptr, VK_IMAGE_LAYOUT_GENERAL);
 	VkRenderingAttachmentInfo depthAttachment = VulkanInit::depth_attachment_info(_depthImage.imageView, VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL);
 
-	VkRenderingInfo renderInfo = VulkanInit::rendering_info(_windowExtent, &colorAttachment, &depthAttachment);
+	VkRenderingInfo renderInfo = VulkanInit::rendering_info(_drawExtent, &colorAttachment, &depthAttachment);
 
 	vkCmdBeginRendering(cmd, &renderInfo);
 
