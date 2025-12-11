@@ -39,6 +39,7 @@ struct FrameData {
 	VkFence _renderFence;
 
 	DeletionQueue _deletionQueue;
+	DescriptorAllocatorGrowable _frameDescriptors;
 };
 
 constexpr unsigned int FRAME_OVERLAP = 2;
@@ -106,6 +107,9 @@ public:
 	float renderScale = 1.f;
 
 	VmaAllocator _allocator;
+
+	GPUSceneData sceneData;
+	VkDescriptorSetLayout _gpuSceneDataDescriptorLayout;
 
 	/////////////////////////////////////
 	/// Descriptors
