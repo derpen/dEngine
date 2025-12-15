@@ -79,3 +79,28 @@ struct GPUSceneData {
     glm::vec4 sunlightColor;
 };
 
+enum class MaterialPass :uint8_t {
+    MainColor,
+    Transparent,
+    Other
+};
+
+struct MaterialPipeline {
+	VkPipeline pipeline;
+	VkPipelineLayout layout;
+};
+
+struct MaterialInstance {
+    MaterialPipeline* pipeline;
+    VkDescriptorSet materialSet;
+    MaterialPass passType;
+};
+
+struct DrawContext;
+
+// base class for a renderable dynamic object
+class IRenderable {
+
+    virtual void Draw(const glm::mat4& topMatrix, DrawContext& ctx) = 0;
+};
+
