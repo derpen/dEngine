@@ -75,6 +75,14 @@ struct DrawContext {
 	std::vector<RenderObject> OpaqueSurfaces;
 };
 
+struct MeshNode : public Node {
+
+	std::shared_ptr<MeshAsset> mesh;
+
+	virtual void Draw(const glm::mat4& topMatrix, DrawContext& ctx) override;
+};
+
+
 struct GLTFMetallic_Roughness {
 	MaterialPipeline opaquePipeline;
 	MaterialPipeline transparentPipeline;
@@ -153,6 +161,9 @@ public:
 
 	VmaAllocator _allocator;
 
+	DrawContext mainDrawContext;
+    std::unordered_map<std::string, std::shared_ptr<Node>> loadedNodes;
+
 	GPUSceneData sceneData;
 	VkDescriptorSetLayout _gpuSceneDataDescriptorLayout;
 	MaterialInstance defaultData;
@@ -208,6 +219,8 @@ public:
 	void render();
 	void render_background(VkCommandBuffer cmd);
 	void render_imgui(VkCommandBuffer cmd, VkImageView targetImageView);
+
+    void update_scene();
 
 	void draw_geometry(VkCommandBuffer cmd);
 	AllocatedBuffer create_buffer(size_t allocSize, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage);
