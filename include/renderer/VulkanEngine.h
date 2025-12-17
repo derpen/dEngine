@@ -3,6 +3,7 @@
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
 #include <imgui_impl_vulkan.h>
+#include <common/Camera.h>
 #include <renderer/VulkanTypes.h>
 #include <renderer/VulkanDescriptors.h>
 #include <renderer/VulkanLoaders.h>
@@ -115,6 +116,8 @@ struct GLTFMetallic_Roughness {
 
 class VulkanEngine {
 public:
+	Camera mainCamera;
+
 	bool resize_requested{ false };
 	bool _isInitialized{ false };
 	int _frameNumber{ 0 };
