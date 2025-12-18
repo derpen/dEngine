@@ -323,21 +323,13 @@ void VulkanEngine::render_imgui(VkCommandBuffer cmd, VkImageView targetImageView
 
 void VulkanEngine::update_scene()
 {
-	//sceneData.view = glm::translate(glm::vec3{ 0,0,-5 });
-	//// camera projection
-	//sceneData.proj = glm::perspective(glm::radians(70.f), (float)_windowExtent.width / (float)_windowExtent.height, 10000.f, 0.1f);
-
-	//// invert the Y direction on projection matrix so that we are more similar
-	//// to opengl and gltf axis
-	//sceneData.proj[1][1] *= -1;
-	//sceneData.viewproj = sceneData.proj * sceneData.view;
-
 	mainCamera.update();
 
 	glm::mat4 view = mainCamera.getViewMatrix();
 
 	// camera projection
-	glm::mat4 projection = glm::perspective(glm::radians(70.f), (float)_drawExtent.width / (float)_drawExtent.height, 10000.f, 0.1f);
+	//glm::mat4 projection = glm::perspective(glm::radians(70.f), (float)_drawExtent.width / (float)_drawExtent.height, 10000.f, 0.1f);
+	glm::mat4 projection = glm::perspective(glm::radians(70.f), (float)_windowExtent.width / (float)_windowExtent.height, 10000.f, 0.1f);
 
 	// invert the Y direction on projection matrix so that we are more similar
 	// to opengl and gltf axis
@@ -354,6 +346,29 @@ void VulkanEngine::update_scene()
 	sceneData.ambientColor = glm::vec4(.1f);
 	sceneData.sunlightColor = glm::vec4(1.f);
 	sceneData.sunlightDirection = glm::vec4(0,1,0.5,1.f);
+
+	//mainDrawContext.OpaqueSurfaces.clear();
+
+	//for (auto& m : loadedNodes) {
+	//	m.second->Draw(glm::mat4{1.f}, mainDrawContext);
+	//}
+
+	//for (int x = -3; x < 3; x++) {
+
+	//	glm::mat4 scale = glm::scale(glm::vec3{0.2});
+	//	glm::mat4 translation =  glm::translate(glm::vec3{x, 1, 0});
+
+	//	loadedNodes["Cube"]->Draw(translation * scale, mainDrawContext);
+	//}
+
+	//sceneData.view = glm::translate(glm::vec3{ 0,0,-5 });
+	//// camera projection
+	//sceneData.proj = glm::perspective(glm::radians(70.f), (float)_windowExtent.width / (float)_windowExtent.height, 10000.f, 0.1f);
+
+	//// invert the Y direction on projection matrix so that we are more similar
+	//// to opengl and gltf axis
+	//sceneData.proj[1][1] *= -1;
+	//sceneData.viewproj = sceneData.proj * sceneData.view;
 }
 
 void VulkanEngine::draw_geometry(VkCommandBuffer cmd)
@@ -365,29 +380,35 @@ void VulkanEngine::draw_geometry(VkCommandBuffer cmd)
 
 	vkCmdBeginRendering(cmd, &renderInfo);
 
-	vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, _trianglePipeline);
+///////////////////////
+// TRIANGLE START
+///////////////////////
+	//vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, _trianglePipeline);
 
-	//set dynamic viewport and scissor
-	VkViewport viewport = {};
-	viewport.x = 0;
-	viewport.y = 0;
-	viewport.width = _drawExtent.width;
-	viewport.height = _drawExtent.height;
-	viewport.minDepth = 0.0f;
-	viewport.maxDepth = 1.0f;
+	////set dynamic viewport and scissor
+	//VkViewport viewport = {};
+	//viewport.x = 0;
+	//viewport.y = 0;
+	//viewport.width = _drawExtent.width;
+	//viewport.height = _drawExtent.height;
+	//viewport.minDepth = 0.0f;
+	//viewport.maxDepth = 1.0f;
 
-	vkCmdSetViewport(cmd, 0, 1, &viewport);
+	//vkCmdSetViewport(cmd, 0, 1, &viewport);
 
-	VkRect2D scissor = {};
-	scissor.offset.x = 0;
-	scissor.offset.y = 0;
-	scissor.extent.width = _drawExtent.width;
-	scissor.extent.height = _drawExtent.height;
+	//VkRect2D scissor = {};
+	//scissor.offset.x = 0;
+	//scissor.offset.y = 0;
+	//scissor.extent.width = _drawExtent.width;
+	//scissor.extent.height = _drawExtent.height;
 
-	vkCmdSetScissor(cmd, 0, 1, &scissor);
+	//vkCmdSetScissor(cmd, 0, 1, &scissor);
 
-	//launch a draw command to draw 3 vertices
-	vkCmdDraw(cmd, 3, 1, 0, 0);
+	////launch a draw command to draw 3 vertices
+	//vkCmdDraw(cmd, 3, 1, 0, 0);
+///////////////////////
+// TRIANGLE START
+///////////////////////
 
 ///////////////////////
 // MONKEY START
