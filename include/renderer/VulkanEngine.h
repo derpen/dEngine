@@ -216,6 +216,8 @@ public:
 	GPUMeshBuffers rectangle;
 	std::vector<std::shared_ptr<MeshAsset>> testMeshes;
 
+	std::unordered_map<std::string, std::shared_ptr<LoadedGLTF>> loadedScenes;
+
 	void init();
 
 	/// @TODO: Might be more accurate to call these "draw" instead of "render"?
@@ -248,6 +250,7 @@ private:
 	void init_pipelines();
 	void init_background_pipelines();
 	void init_imgui();
+	void init_renderables();
 	void init_triangle_pipeline();
 	void init_mesh_pipeline();
 	void init_default_data();

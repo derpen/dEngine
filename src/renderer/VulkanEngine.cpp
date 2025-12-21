@@ -180,10 +180,12 @@ void VulkanEngine::init() {
 
 	init_default_data();
 
+	init_renderables();
+
     _isInitialized = true;
 
 	mainCamera.velocity = glm::vec3(0.f);
-	mainCamera.position = glm::vec3(0, 0, 5);
+	mainCamera.position = glm::vec3(30.f, -00.f, -085.f);
 
 	mainCamera.pitch = 0;
 	mainCamera.yaw = 0;
@@ -328,8 +330,7 @@ void VulkanEngine::update_scene()
 	glm::mat4 view = mainCamera.getViewMatrix();
 
 	// camera projection
-	//glm::mat4 projection = glm::perspective(glm::radians(70.f), (float)_drawExtent.width / (float)_drawExtent.height, 10000.f, 0.1f);
-	glm::mat4 projection = glm::perspective(glm::radians(70.f), (float)_windowExtent.width / (float)_windowExtent.height, 10000.f, 0.1f);
+	glm::mat4 projection = glm::perspective(glm::radians(70.f), (float)_drawExtent.width / (float)_drawExtent.height, 10000.f, 0.1f);
 
 	// invert the Y direction on projection matrix so that we are more similar
 	// to opengl and gltf axis
@@ -339,13 +340,31 @@ void VulkanEngine::update_scene()
 	sceneData.proj = projection;
 	sceneData.viewproj = projection * view;
 
-	mainDrawContext.OpaqueSurfaces.clear();
-	loadedNodes["Suzanne"]->Draw(glm::mat4{1.f}, mainDrawContext);	
+    loadedScenes["structure"]->Draw(glm::mat4{ 1.f }, mainDrawContext);
 
-	//some default lighting parameters
-	sceneData.ambientColor = glm::vec4(.1f);
-	sceneData.sunlightColor = glm::vec4(1.f);
-	sceneData.sunlightDirection = glm::vec4(0,1,0.5,1.f);
+	//mainCamera.update();
+
+	//glm::mat4 view = mainCamera.getViewMatrix();
+
+	//// camera projection
+	////glm::mat4 projection = glm::perspective(glm::radians(70.f), (float)_drawExtent.width / (float)_drawExtent.height, 10000.f, 0.1f);
+	//glm::mat4 projection = glm::perspective(glm::radians(70.f), (float)_windowExtent.width / (float)_windowExtent.height, 10000.f, 0.1f);
+
+	//// invert the Y direction on projection matrix so that we are more similar
+	//// to opengl and gltf axis
+	//projection[1][1] *= -1;
+
+	//sceneData.view = view;
+	//sceneData.proj = projection;
+	//sceneData.viewproj = projection * view;
+
+	//mainDrawContext.OpaqueSurfaces.clear();
+	//loadedNodes["Suzanne"]->Draw(glm::mat4{1.f}, mainDrawContext);	
+
+	////some default lighting parameters
+	//sceneData.ambientColor = glm::vec4(.1f);
+	//sceneData.sunlightColor = glm::vec4(1.f);
+	//sceneData.sunlightDirection = glm::vec4(0,1,0.5,1.f);
 
 	//mainDrawContext.OpaqueSurfaces.clear();
 
@@ -566,6 +585,8 @@ GPUMeshBuffers VulkanEngine::uploadMesh(std::span<uint32_t> indices, std::span<V
 void VulkanEngine::cleanup() {
 	if (_isInitialized) {
 		vkDeviceWaitIdle(_device);
+
+		loadedScenes.clear();
 
 		for (int i = 0; i < FRAME_OVERLAP; i++) {
 			vkDestroyCommandPool(_device, _frames[i]._commandPool, nullptr);
@@ -1156,6 +1177,16 @@ void VulkanEngine::init_imgui()
 		ImGui_ImplVulkan_Shutdown();
 		vkDestroyDescriptorPool(_device, imguiPool, nullptr);
 	});
+}
+
+void VulkanEngine::init_renderables()
+{
+    std::string structurePath = { "..\\..\\assets\\structure.glb" };
+    auto structureFile = loadGltf(this,structurePath);
+
+    assert(structureFile.has_value());
+
+    loadedScenes["structure"] = *structureFile;
 }
 
 void VulkanEngine::init_triangle_pipeline()
